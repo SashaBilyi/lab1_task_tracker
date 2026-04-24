@@ -44,7 +44,7 @@ def health_ready():
 
 @app.route('/', methods=['GET'])
 def root():
-    html = """<!DOCTYPE html><html><head><meta charset="UTF-8"><title>API Endpoints</title></head><body><h1>Список ендпоінтів бізнес-логіки:</h1><ul><li>GET /tasks — вивести усі задачі</li><li>POST /tasks — створити нову задачу (потрібен параметр title)</li><li>POST /tasks/&lt;id&gt;/done — змінити статус задачі на виконано</li></ul></body></html>"""
+    html = """<!DOCTYPE html><html><head><meta charset="UTF-8"><title>API Endpoints</title></head><body><h1>Список ендпоінтів бізнес-логіки:</h1><ul><li>GET /tasks — вивести усі задачі</li><li>POST /tasks — створити нову задачу</li><li>POST /tasks/&lt;id&gt;/done — змінити статус задачі на виконано</li></ul></body></html>"""
     response = make_response(html)
     response.headers['Content-Type'] = 'text/html'
     return response
