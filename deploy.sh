@@ -1,9 +1,11 @@
-#!/bin/bash
 
-if [ "$EUID" -ne 0 ]; then exit 1; fi
+if [ "$EUID" -ne 0 ]; then 
+    echo "Запустіть скрипт через sudo!"
+    exit 1
+fi
 
 apt-get update
-apt-get install -y python3 python3-venv python3-pip mariadb-server nginx gcc libmariadb-dev
+apt-get install -y python3 python3-venv python3-pip mariadb-server nginx gcc libmariadb-dev openssl
 
 if ! id "student" &>/dev/null; then
     useradd -m -s /bin/bash -G sudo -p $(openssl passwd -1 studentpass) student
@@ -19,7 +21,11 @@ if ! id "app" &>/dev/null; then
 fi
 
 if ! id "operator" &>/dev/null; then
-    useradd -m -s /bin/bash -p $(openssl passwd -1 12345678) operator
+    if getent group operator > /dev/null; then
+        useradd -m -s /bin/bash -g operator -p $(openssl passwd -1 12345678) operator
+    else
+        useradd -m -s /bin/bash -p $(openssl passwd -1 12345678) operator
+    fi
     chage -d 0 operator 
 fi
 
@@ -83,14 +89,17 @@ server {
     server_name _;
     access_log /var/log/nginx/mywebapp_access.log;
     error_log /var/log/nginx/mywebapp_error.log;
+    
     location = / {
         proxy_pass http://127.0.0.1:5000;
         proxy_set_header Host \$host;
     }
+    
     location /tasks {
         proxy_pass http://127.0.0.1:5000;
         proxy_set_header Host \$host;
     }
+    
     location / { return 403; }
 }
 EOF
@@ -102,6 +111,7 @@ systemctl restart nginx
 echo "4" > /home/student/gradebook
 chown student:student /home/student/gradebook
 
-if [ -n "\$SUDO_USER" ]; then
-    usermod -L "\$SUDO_USER"
+if [ -n "$SUDO_USER" ]; then
+    usermod -L "$SUDO_USER"
+    usermod -s /usr/sbin/nologin "$SUDO_USER"
 fi
