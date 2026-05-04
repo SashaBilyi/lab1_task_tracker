@@ -97,6 +97,7 @@ if __name__ == '__main__':
     parser.add_argument('--db-password', required=True)
     parser.add_argument('--db-name', required=True)
     parser.add_argument('--port', type=int, default=5000)
+    parser.add_argument('--host', default='127.0.0.1')
     args = parser.parse_args()
     
     db_config['host'] = args.db_host
@@ -106,7 +107,7 @@ if __name__ == '__main__':
     
     listen_fds = os.environ.get('LISTEN_FDS')
     if listen_fds and int(listen_fds) > 0:
-        server = make_server('127.0.0.1', args.port, app, fd=3)
+        server = make_server(args.host, args.port, app, fd=3)
         server.serve_forever()
     else:
-        app.run(host='127.0.0.1', port=args.port)
+        app.run(host=args.host, port=args.port)
