@@ -188,3 +188,19 @@ curl -X POST -d "title=Cook dinner" http://127.0.0.1/tasks
 ```bash
 curl -X POST http://127.0.0.1/tasks/1/done
 ```
+
+### Інструкція з запуску проєкту за допомогою Docker Compose
+
+#### 1. Склонуйте репозиторій
+
+#### 2. Для запуску виконайте команду
+
+```bash
+sudo docker compose up -d
+```
+
+#### 3. Для зупинки виконайте команду
+
+```bash
+sudo docker compose down
+```
