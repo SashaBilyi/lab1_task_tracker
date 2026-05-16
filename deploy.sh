@@ -1,4 +1,4 @@
-
+#!/bin/bash
 if [ "$EUID" -ne 0 ]; then 
     echo "Запустіть скрипт через sudo!"
     exit 1
@@ -8,11 +8,11 @@ apt-get update
 apt-get install -y python3 python3-venv python3-pip mariadb-server nginx gcc libmariadb-dev openssl
 
 if ! id "student" &>/dev/null; then
-    useradd -m -s /bin/bash -G sudo -p $(openssl passwd -1 studentpass) student
+    useradd -m -s /bin/bash -G sudo -p "$(openssl passwd -1 studentpass)" student
 fi
 
 if ! id "teacher" &>/dev/null; then
-    useradd -m -s /bin/bash -G sudo -p $(openssl passwd -1 12345678) teacher
+    useradd -m -s /bin/bash -G sudo -p "$(openssl passwd -1 12345678)" teacher
     chage -d 0 teacher 
 fi
 
@@ -22,9 +22,9 @@ fi
 
 if ! id "operator" &>/dev/null; then
     if getent group operator > /dev/null; then
-        useradd -m -s /bin/bash -g operator -p $(openssl passwd -1 12345678) operator
+        useradd -m -s /bin/bash -g operator -p "$(openssl passwd -1 12345678)" operator
     else
-        useradd -m -s /bin/bash -p $(openssl passwd -1 12345678) operator
+        useradd -m -s /bin/bash -p "$(openssl passwd -1 12345678)" operator
     fi
     chage -d 0 operator 
 fi
