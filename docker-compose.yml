@@ -43,4 +43,3 @@ services:
 networks:
   lab_network:
     driver: bridge
-    
