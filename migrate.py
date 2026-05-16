@@ -2,6 +2,7 @@ import argparse
 import mariadb
 import sys
 
+
 def run_migration(host, user, password, database):
     try:
         conn = mariadb.connect(host=host, user=user, password=password, database=database)
@@ -19,7 +20,9 @@ def run_migration(host, user, password, database):
     except mariadb.Error:
         sys.exit(1)
     finally:
-        if 'conn' in locals() and conn: conn.close()
+        if 'conn' in locals() and conn:
+            conn.close()
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

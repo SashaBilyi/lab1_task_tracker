@@ -1,0 +1,58 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+    tags: [ "*" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  analyze-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.10"
+
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc libmariadb-dev shellcheck
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r requirements-test.txt
+        pip install yamllint
+
+    - name: Lint YAML files
+      run: yamllint docker-compose.yml
+
+    - name: Lint Dockerfile
+      uses: hadolint/hadolint-action@v3.1.0
+      with:
+        dockerfile: Dockerfile
+
+    - name: Lint Shell scripts
+      run: shellcheck deploy.sh
+
+    - name: Lint Python code
+      run: flake8 app.py migrate.py test_app.py
+
+    - name: Run Tests and Coverage
+      run: |
+        pytest --cov=app --cov-report=html --cov-report=term-missing --cov-fail-under=40
+
+    - name: Upload Coverage Artifact
+      if: always() 
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: htmlcov/
