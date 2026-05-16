@@ -1,4 +1,4 @@
-
+---
 services:
   database:
     image: mariadb:10.11
@@ -16,7 +16,7 @@ services:
       - lab_network
 
   web:
-    build: 
+    build:
       context: .
     container_name: lab1_flask_app
     restart: unless-stopped
@@ -43,3 +43,4 @@ services:
 networks:
   lab_network:
     driver: bridge
+    
