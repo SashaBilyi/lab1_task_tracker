@@ -94,3 +94,27 @@ jobs:
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
+
+  deploy:
+    needs: build-and-push
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: self-hosted
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Deploy application to Target Node
+      run: |
+        tar -czf app.tar.gz .
+        scp -o StrictHostKeyChecking=no app.tar.gz sasha@192.168.0.103:~/
+        ssh -o StrictHostKeyChecking=no sasha@192.168.0.103 "mkdir -p ~/lab1_task_tracker && tar -xzf ~/app.tar.gz -C ~/lab1_task_tracker && cd ~/lab1_task_tracker && chmod +x deploy_lab3.sh && ./deploy_lab3.sh"
+
+    - name: Verify deployment
+      run: |
+        HTTP_STATUS=$(curl -o /dev/null -s -w "%{http_code}\n" http://192.168.0.103)
+        if [ "$HTTP_STATUS" -eq 200 ]; then
+          exit 0
+        else
+          exit 1
+        fi
