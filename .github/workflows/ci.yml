@@ -112,6 +112,7 @@ jobs:
 
     - name: Verify deployment
       run: |
+        sleep 20
         HTTP_STATUS=$(curl -o /dev/null -s -w "%{http_code}\n" http://192.168.0.103)
         if [ "$HTTP_STATUS" -eq 200 ]; then
           exit 0
