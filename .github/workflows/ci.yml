@@ -106,7 +106,7 @@ jobs:
 
     - name: Deploy application to Target Node
       run: |
-        tar -czf app.tar.gz .
+        tar --exclude=app.tar.gz -czf app.tar.gz .
         scp -o StrictHostKeyChecking=no app.tar.gz sasha@192.168.0.103:~/
         ssh -o StrictHostKeyChecking=no sasha@192.168.0.103 "mkdir -p ~/lab1_task_tracker && tar -xzf ~/app.tar.gz -C ~/lab1_task_tracker && cd ~/lab1_task_tracker && chmod +x deploy_lab3.sh && ./deploy_lab3.sh"
 
