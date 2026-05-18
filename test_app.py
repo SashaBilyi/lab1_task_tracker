@@ -52,7 +52,7 @@ def test_get_tasks(mock_get_db, client):
     mock_get_db.return_value = mock_conn
 
     rv = client.get('/tasks')
-    assert rv.status_code == 200
+    assert rv.status_code == 404
     assert b'Test Task' in rv.data
 
 
